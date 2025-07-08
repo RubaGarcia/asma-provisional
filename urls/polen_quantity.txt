@@ -1,0 +1,16 @@
+https://datos.comunidad.madrid/catalogo/dataset/b0f1e9eb-dfe6-4baf-8167-4fa7a0710509/resource/d09b0c75-f6a1-49dd-bf81-45aaf6506bc9/download/2010.csv
+https://datos.comunidad.madrid/catalogo/dataset/b0f1e9eb-dfe6-4baf-8167-4fa7a0710509/resource/2201081b-f721-4822-a539-cd50416bafba/download/2011.csv
+https://datos.comunidad.madrid/catalogo/dataset/b0f1e9eb-dfe6-4baf-8167-4fa7a0710509/resource/52d7d913-a0f0-4659-83d3-e6bafe86f43b/download/2012.csv
+https://datos.comunidad.madrid/catalogo/dataset/b0f1e9eb-dfe6-4baf-8167-4fa7a0710509/resource/4b1406aa-a676-4b0e-9db6-cc114932a5d8/download/2013.csv
+https://datos.comunidad.madrid/catalogo/dataset/b0f1e9eb-dfe6-4baf-8167-4fa7a0710509/resource/d5f64a9a-de2a-45e0-9a67-02894025fb8b/download/2014.csv
+https://datos.comunidad.madrid/catalogo/dataset/b0f1e9eb-dfe6-4baf-8167-4fa7a0710509/resource/24e8fb64-dfa3-4088-bc43-3cacd2063544/download/2015.csv
+https://datos.comunidad.madrid/catalogo/dataset/b0f1e9eb-dfe6-4baf-8167-4fa7a0710509/resource/8ab1db74-0c04-4615-9e43-8ae2972cee10/download/2016.csv
+https://datos.comunidad.madrid/catalogo/dataset/b0f1e9eb-dfe6-4baf-8167-4fa7a0710509/resource/6965c4ed-c1a8-45a0-a9cc-e51e1e2403b8/download/2017.csv
+https://datos.comunidad.madrid/catalogo/dataset/b0f1e9eb-dfe6-4baf-8167-4fa7a0710509/resource/4a944c0a-e316-4d4b-b12b-05c51c65691d/download/2018.csv
+https://datos.comunidad.madrid/catalogo/dataset/b0f1e9eb-dfe6-4baf-8167-4fa7a0710509/resource/51179a09-694c-4579-88b4-4ebc451da603/download/2019.csv
+https://datos.comunidad.madrid/catalogo/dataset/b0f1e9eb-dfe6-4baf-8167-4fa7a0710509/resource/a86b8045-f455-4cbc-9523-8fb7020dbfa6/download/2020.csv
+https://datos.comunidad.madrid/catalogo/dataset/b0f1e9eb-dfe6-4baf-8167-4fa7a0710509/resource/2615b31b-a74a-4674-89c2-85cf63ee7f42/download/2021.csv
+https://datos.comunidad.madrid/catalogo/dataset/b0f1e9eb-dfe6-4baf-8167-4fa7a0710509/resource/fed85c1e-c5e8-49cf-9985-a39fb10f978c/download/2022.csv
+https://datos.comunidad.madrid/catalogo/dataset/b0f1e9eb-dfe6-4baf-8167-4fa7a0710509/resource/adaaa9ec-196f-417d-80dc-0f9ee1813b3a/download/2023.csv
+https://datos.comunidad.madrid/catalogo/dataset/b0f1e9eb-dfe6-4baf-8167-4fa7a0710509/resource/58005206-9020-4c4e-8cd0-16089760f02f/download/2024.csv
+https://datos.comunidad.madrid/catalogo/dataset/b0f1e9eb-dfe6-4baf-8167-4fa7a0710509/resource/96b2c2dd-07c0-4a14-8395-53d03852e3c3/download/historico_1993_2009.zip
