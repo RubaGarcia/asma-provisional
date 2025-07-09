@@ -10,7 +10,7 @@ def leer_csv_con_codificacion(f):
         return pd.read_csv(f, sep=';', encoding='latin1')
 
 # Leer todos los archivos CSV descargados
-archivos = glob("downloads_polen/*.csv")
+archivos = glob("downloads/polen_quality/*.csv")
 dfs = [leer_csv_con_codificacion(f) for f in archivos]
 
 
