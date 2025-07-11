@@ -11,7 +11,7 @@ os.makedirs(carpeta_salida, exist_ok=True)
 columnas_numericas = [
     'p_max', 'hr', 'nw_55', 'tm_min', 'ta_max', 'ts_min', 'nt_30',
     'w_racha', 'np_100', 'nw_91', 'np_001', 'ta_min', 'w_rec', 'e',
-    'np_300', 'p_mes', 'w_med', 'nt_00', 'ti_max', 'tm_mes', 'tm_max', 'np_010'
+    'np_300', 'p_mes', 'w_med', 'nt_00', 'ti_max', 'tm_mes', 'tm_max', 'np_010','q_min','q_max'
 ]
 
 # Recorremos cada subcarpeta (una por estación)
