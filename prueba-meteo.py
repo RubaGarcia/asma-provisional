@@ -32,14 +32,12 @@ for carpeta_estacion in os.listdir(carpeta_raiz):
             if 'fecha' in df.columns:
                 df['fecha'] = pd.to_datetime(df['fecha'], errors='coerce', dayfirst=True)
                 df = df.dropna(subset=['fecha'])
-                df['fecha'] = df['fecha'].dt.strftime('%d-%m-%Y')
 
             # Convertir columnas numéricas
             for col in columnas_numericas:
                 if col in df.columns:
                     df[col] = pd.to_numeric(df[col], errors='coerce')
 
-            # Agregar a la lista
             dfs.append(df)
 
         except Exception as e:
@@ -48,7 +46,18 @@ for carpeta_estacion in os.listdir(carpeta_raiz):
     # Unir todos los archivos de la estación
     if dfs:
         df_estacion = pd.concat(dfs, ignore_index=True)
-        df_estacion = df_estacion.sort_values(by='fecha')
+        df_estacion = df_estacion.sort_values(by='fecha')  # Orden cronológico
+
+        # Formatear fecha como texto en formato dd-mm-aaaa
+        if 'fecha' in df_estacion.columns:
+            df_estacion['fecha'] = df_estacion['fecha'].dt.strftime('%d-%m-%Y')
+
+            # Mover la columna fecha al inicio
+            cols = df_estacion.columns.tolist()
+            cols.insert(0, cols.pop(cols.index('fecha')))
+            df_estacion = df_estacion[cols]
+
+        # Obtener identificador de la estación
         cod_estacion = df_estacion['indicativo'].iloc[0] if 'indicativo' in df_estacion.columns else carpeta_estacion
 
         # Guardar archivo final
