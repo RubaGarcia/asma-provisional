@@ -103,7 +103,7 @@ def descargar_y_guardar_datos_multiples(estaciones, anio, mes_inicio, mes_fin, m
     return False
 
 # Función principal para descargar los datos diarios de las estaciones
-def download_aemet_files_diarios():
+def download_aemet_files():
     """
     Descarga los datos diarios de las estaciones meteorológicas de Madrid para los años 2001 a 2024.
     """
@@ -128,6 +128,3 @@ def download_aemet_files_diarios():
             print(item)
     else:
         print("Todos los datos se descargaron con éxito.")
-
-# Llamada a la función
-download_aemet_files_diarios()

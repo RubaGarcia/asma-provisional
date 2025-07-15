@@ -59,7 +59,7 @@ for carpeta_estacion in os.listdir(carpeta_raiz):
 
         # Guardar archivo final con el nombre del indicativo
         salida = os.path.join(carpeta_salida, f"{cod_estacion}.csv")
-        df_estacion.to_csv(salida, index=False)
+        df_estacion.to_csv(salida, index=False, sep=';')
         print(f"✅ Estación {cod_estacion} procesada y guardada en {salida}")
     else:
         print(f"⚠️ No se encontraron datos válidos para estación: {carpeta_estacion}")

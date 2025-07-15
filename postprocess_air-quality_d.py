@@ -52,7 +52,7 @@ for (año, mes, punto_base), magnitudes_dict in datos.items():
     for fecha in fechas:
         fila = {"FECHA": fecha}  # Ya no agregamos el PUNTO_MUESTREO
         for magnitud, valores_dict in magnitudes_dict.items():
-            val_key = f"VAL{magnitud.zfill(3)}"  # Solo mantener el valor bajo una clave específica
+            val_key = f"mag{magnitud.zfill(3)}"  # Solo mantener el valor bajo una clave específica
             fila[val_key] = valores_dict.get(fecha, "")
         puntos_dict[punto_base].append(fila)
 
@@ -60,6 +60,8 @@ for (año, mes, punto_base), magnitudes_dict in datos.items():
 for punto_base, filas in puntos_dict.items():
     df_out = pd.DataFrame(filas)
     df_out.sort_values(by="FECHA", inplace=True)
+
+    df_out.columns = df_out.columns.str.lower()
 
     output_folder = output_root
     os.makedirs(output_folder, exist_ok=True)
