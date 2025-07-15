@@ -63,3 +63,5 @@ for carpeta_estacion in os.listdir(carpeta_raiz):
         print(f"✅ Estación {cod_estacion} procesada y guardada en {salida}")
     else:
         print(f"⚠️ No se encontraron datos válidos para estación: {carpeta_estacion}")
+
+

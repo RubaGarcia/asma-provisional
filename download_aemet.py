@@ -8,29 +8,49 @@ load_dotenv()  # Cargar variables de entorno desde .env
 API_KEY = os.getenv('API_KEY')
 
 # Paso 1: Obtener inventario completo y filtrar estaciones de Madrid
-def obtener_estaciones_madrid():
+def obtener_estaciones_madrid(guardar_metadata=True):
     """
-    Obtiene las estaciones meteorológicas de Madrid desde el inventario de AEMET.
+    Obtiene las estaciones meteorológicas de Madrid desde el inventario de AEMET y 
+    guarda la metadata en un archivo CSV.
     """
     url_inventario = 'https://opendata.aemet.es/opendata/api/valores/climatologicos/inventarioestaciones/todasestaciones'
-
     response = requests.get(url_inventario, headers={'api_key': API_KEY})
     data = response.json()
 
     if 'datos' in data:
         url_datos = data['datos']
-        
         response_estaciones = requests.get(url_datos)
         estaciones_json = response_estaciones.json()
-        
         df_estaciones = pd.DataFrame(estaciones_json)
+
+        # Filtrar solo las estaciones de Madrid
         df_madrid = df_estaciones[df_estaciones['provincia'].str.lower() == 'madrid']
         estaciones = df_madrid['indicativo'].tolist()
+
+        # Guardar metadata si se solicita
+        if guardar_metadata:
+            carpeta = "output/meteo"
+            os.makedirs(carpeta, exist_ok=True)
+            archivo_metadata = os.path.join(carpeta, "metadata_estaciones.csv")
+
+            # Reordenar columnas: id, nombre, lon, lat, resto...
+            columnas = df_madrid.columns.tolist()
+            columnas_ordenadas = ['indicativo', 'nombre', 'longitud', 'latitud'] + [col for col in columnas if col not in ['indicativo', 'nombre', 'longitud', 'latitud']]
+            df_madrid = df_madrid[columnas_ordenadas]
+            df_madrid.rename(columns={
+                'indicativo': 'id',
+                'nombre': 'name',
+                'longitud': 'lon',
+                'latitud': 'lat'
+            }, inplace=True)
+            df_madrid.to_csv(archivo_metadata, index=False)
+            print(f"Metadata guardada en {archivo_metadata}")
         
         print(f"Estaciones de Madrid encontradas: {len(estaciones)}")
     else:
         print("No se pudo obtener la URL para descargar el inventario.")
         estaciones = []
+
     return estaciones
 
 # Función para descargar datos de varias estaciones
@@ -87,7 +107,8 @@ def descargar_y_guardar_datos_multiples(estaciones, anio, mes_inicio, mes_fin, m
                                 df_estacion = df[df['indicativo'] == estacion]
                                 archivo_estacion = os.path.join(carpeta_estacion, f"datos_{estacion}_{anio}_{mes_inicio}_{mes_fin}.csv")
                                 df_estacion.to_csv(archivo_estacion, index=False)
-                                print(f"Datos de estación {estacion} guardados en {archivo_estacion}")
+                                # print(f"Datos de estación {estacion} guardados en {archivo_estacion}")
+                            print(f'{anio}-{mes_inicio} - {anio}-{mes_fin} ')
                             return True
                         else:
                             return False
@@ -107,6 +128,7 @@ def download_aemet_files():
     """
     Descarga los datos diarios de las estaciones meteorológicas de Madrid para los años 2001 a 2024.
     """
+    print("Iniciando descarga de datos meteorológicos de AEMET...")
     estaciones = obtener_estaciones_madrid()
     if not estaciones:
         return
