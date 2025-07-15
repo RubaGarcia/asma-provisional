@@ -64,8 +64,8 @@ def descargar_y_guardar_datos_multiples(estaciones, anio, mes_inicio, mes_fin, m
 
     for intento in range(max_retries):
         try:
-            response = requests.get(url, timeout=10)
-            # time.sleep(1.25)  # Espera para evitar sobrecargar el servidor
+            response = requests.get(url, timeout=30)
+            time.sleep(1.25)  # Espera para evitar sobrecargar el servidor
             if response.status_code == 200:
                 data = response.json()
                 url_datos = data.get('datos')
@@ -128,3 +128,4 @@ def download_aemet_files():
             print(item)
     else:
         print("Todos los datos se descargaron con éxito.")
+download_aemet_files()

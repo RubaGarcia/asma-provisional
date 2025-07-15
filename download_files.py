@@ -6,8 +6,8 @@ def main():
     parser = argparse.ArgumentParser(description="Descarga ficheros de calidad del aire o polen.")
     parser.add_argument(
         "--type",
-        choices=["air_quality-hourly", "air_quality-daily", "polen_quantity"],
-        help="Tipo de descarga: air_quality-hourly, air_quality-daily o polen_quantity"
+        choices=["air_quality-hourly", "air_quality-daily", "polen_quantity", "aemet"],
+        help="Tipo de descarga: air_quality-hourly, air_quality-daily, polen_quantity o aemet.",
     )
     args = parser.parse_args()
 
