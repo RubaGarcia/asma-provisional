@@ -10,6 +10,14 @@ os.makedirs(output_folder, exist_ok=True)
 # Lista para guardar los dataframes leídos
 all_data = []
 
+type_rename_map = {
+    'Casta?o': 'Castaño',
+    'Cupres?ceas/Tax?ceas': 'Cupresáceas/Taxáceas',
+    'Gram?neas': 'Gramíneas',
+    'Quenopodi?ceas/Amarant?ceas': 'Quenopodiáceas/Amarantáceas',
+    'Pl?tano de paseo':'Plátano de paseo'
+}
+
 # Leer todos los ficheros CSV o TXT
 for filename in os.listdir(folder_path):
     if filename.endswith(".csv") or filename.endswith(".txt"):
@@ -18,6 +26,13 @@ for filename in os.listdir(folder_path):
             df = pd.read_csv(file_path, sep=';', encoding='utf-8')
         except UnicodeDecodeError:
             df = pd.read_csv(file_path, sep=';', encoding='latin1')
+
+        df.columns = df.columns.str.strip()  # Eliminar espacios en blanco
+        
+        # Renombramos los valores en la columna 'tipo_polinico' según el diccionario
+        df['tipo_polinico'] = df['tipo_polinico'].map(type_rename_map).fillna(df['tipo_polinico'])
+        
+        
         all_data.append(df)
 
 # Unir todos los datos
@@ -50,7 +65,7 @@ for captador, group_df in grouped:
     group_df = group_df.sort_values(by="fecha_lectura")
 
     # Convertir la fecha datetime a string para guardar
-    group_df["fecha_lectura"] = group_df["fecha_lectura"].dt.strftime("%d-%m-%Y")
+    group_df["fecha_lectura"] = group_df["fecha_lectura"].dt.strftime('%Y-%m-%d')
 
     # Si existía columna 'fecha_lectura_str', eliminarla para evitar confusiones
     if "fecha_lectura_str" in group_df.columns:
@@ -63,6 +78,7 @@ for captador, group_df in grouped:
 
     
     output_file = os.path.join(output_folder, f"{captador}.csv")
+    group_df.rename(columns={'fecha_lectura': 'fecha'}, inplace=True)
     group_df.to_csv(output_file, sep=';', index=False)
 
 print("✅ Archivos generados por estación en:", output_folder)

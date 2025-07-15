@@ -7,13 +7,6 @@ carpeta_raiz = "downloads/metereological-data/"
 carpeta_salida = "./output/meteo/"
 os.makedirs(carpeta_salida, exist_ok=True)
 
-# Columnas numéricas a convertir
-columnas_numericas = [
-    'p_max', 'hr', 'nw_55', 'tm_min', 'ta_max', 'ts_min', 'nt_30',
-    'w_racha', 'np_100', 'nw_91', 'np_001', 'ta_min', 'w_rec', 'e',
-    'np_300', 'p_mes', 'w_med', 'nt_00', 'ti_max', 'tm_mes', 'tm_max', 'np_010','q_min','q_max'
-]
-
 # Recorremos cada subcarpeta (una por estación)
 for carpeta_estacion in os.listdir(carpeta_raiz):
     ruta_estacion = os.path.join(carpeta_raiz, carpeta_estacion)
@@ -25,43 +18,47 @@ for carpeta_estacion in os.listdir(carpeta_raiz):
 
     for archivo in archivos_csv:
         try:
-            df = pd.read_csv(archivo)
-            df.columns = df.columns.str.strip().str.lower()
+            # Intentar leer el archivo CSV
+            df = pd.read_csv(archivo, sep=",", engine='python')  # Asegurarse de que usa el separador correcto
+
+            df.columns = df.columns.str.strip().str.lower()  # Asegurarnos que los nombres de las columnas no tengan espacios
 
             # Procesar fecha
             if 'fecha' in df.columns:
-                df['fecha'] = pd.to_datetime(df['fecha'], errors='coerce', dayfirst=True)
-                df = df.dropna(subset=['fecha'])
+                df['fecha'] = pd.to_datetime(df['fecha'], errors='coerce', dayfirst=False)
+                df = df.dropna(subset=['fecha'])  # Eliminar filas con fechas no válidas
 
-            # Convertir columnas numéricas
-            for col in columnas_numericas:
-                if col in df.columns:
-                    df[col] = pd.to_numeric(df[col], errors='coerce')
+            # Eliminar columnas no necesarias
+            columnas_a_eliminar = ['indicativo', 'nombre', 'provincia']
+            df = df.drop(columns=[col for col in columnas_a_eliminar if col in df.columns])
+
+            # Añadir la estación (indicativo) como nombre del archivo
+            cod_estacion = df['indicativo'].iloc[0] if 'indicativo' in df.columns else carpeta_estacion
 
             dfs.append(df)
 
         except Exception as e:
             print(f"❌ Error procesando archivo {archivo}: {e}")
 
+    # Eliminar columnas vacías antes de concatenar
+    dfs = [df.dropna(axis=1, how='all') for df in dfs]
+
     # Unir todos los archivos de la estación
     if dfs:
         df_estacion = pd.concat(dfs, ignore_index=True)
         df_estacion = df_estacion.sort_values(by='fecha')  # Orden cronológico
 
-        # Formatear fecha como texto en formato dd-mm-aaaa
+        # Asegurarse de que la fecha está en formato ISO (sin necesidad de hacer un 'strftime')
         if 'fecha' in df_estacion.columns:
-            df_estacion['fecha'] = df_estacion['fecha'].dt.strftime('%d-%m-%Y')
+            df_estacion['fecha'] = df_estacion['fecha'].dt.date  # Convierte a tipo 'date'
 
             # Mover la columna fecha al inicio
             cols = df_estacion.columns.tolist()
             cols.insert(0, cols.pop(cols.index('fecha')))
             df_estacion = df_estacion[cols]
 
-        # Obtener identificador de la estación
-        cod_estacion = df_estacion['indicativo'].iloc[0] if 'indicativo' in df_estacion.columns else carpeta_estacion
-
-        # Guardar archivo final
-        salida = os.path.join(carpeta_salida, f"{cod_estacion}_completo.csv")
+        # Guardar archivo final con el nombre del indicativo
+        salida = os.path.join(carpeta_salida, f"{cod_estacion}.csv")
         df_estacion.to_csv(salida, index=False)
         print(f"✅ Estación {cod_estacion} procesada y guardada en {salida}")
     else:

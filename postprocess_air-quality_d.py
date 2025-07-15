@@ -5,7 +5,7 @@ from calendar import monthrange
 
 # Rutas
 input_folder = 'downloads/air_quality-daily'  # Ajusta si es necesario
-output_root = 'output/air_quality-daily'
+output_root = 'output/calidad_aire-diaria'
 
 # Leer todos los archivos
 csv_files = glob(os.path.join(input_folder, '*.csv'))
@@ -34,26 +34,36 @@ for file in csv_files:
         for dia in range(1, dias_validos + 1):
             col = f"D{dia:02d}"
             valor = row.get(col, "")
-            fecha = f"{dia:02d}-{mes:02d}-{año}"
-            datos[clave][magnitud][fecha] = valor
+            # Formato ISO para fecha: YYYY-MM-DD
+            fecha_iso = f"{año:04d}-{mes:02d}-{dia:02d}"
+            datos[clave][magnitud][fecha_iso] = valor
 
-# Escribir archivos
+# Reorganizar datos por punto_base para escritura unificada
+puntos_dict = {}
+
 for (año, mes, punto_base), magnitudes_dict in datos.items():
-    fechas = [f"{dia:02d}-{mes:02d}-{año}" for dia in range(1, monthrange(año, mes)[1] + 1)]
+    dias_validos = monthrange(año, mes)[1]
+    fechas = [f"{año:04d}-{mes:02d}-{dia:02d}" for dia in range(1, dias_validos + 1)]
 
-    filas = []
-    for magnitud, valores_dict in magnitudes_dict.items():
-        fila = [punto_base, magnitud] + [valores_dict.get(fecha, "") for fecha in fechas]
-        filas.append(fila)
+    # Asegurarse de que el punto_base esté en puntos_dict antes de agregar datos
+    if punto_base not in puntos_dict:
+        puntos_dict[punto_base] = []  # Inicializar con lista vacía si no existe
 
-    columnas = ['PUNTO_MUESTREO', 'MAGNITUD'] + fechas
+    for fecha in fechas:
+        fila = {"FECHA": fecha}  # Ya no agregamos el PUNTO_MUESTREO
+        for magnitud, valores_dict in magnitudes_dict.items():
+            val_key = f"VAL{magnitud.zfill(3)}"  # Solo mantener el valor bajo una clave específica
+            fila[val_key] = valores_dict.get(fecha, "")
+        puntos_dict[punto_base].append(fila)
 
-    # Crear carpeta por año y punto_base
-    output_folder = os.path.join(output_root, str(año), punto_base)
+# Escribir un único archivo por punto_base (sin el punto de muestreo y sin la columna de magnitud innecesaria)
+for punto_base, filas in puntos_dict.items():
+    df_out = pd.DataFrame(filas)
+    df_out.sort_values(by="FECHA", inplace=True)
+
+    output_folder = output_root
     os.makedirs(output_folder, exist_ok=True)
 
-    # Guardar el archivo mensual
-    nombre_archivo = f"{mes:02d}-{año}.csv"
+    nombre_archivo = f"{punto_base}.csv"
     output_path = os.path.join(output_folder, nombre_archivo)
-    df_out = pd.DataFrame(filas, columns=columnas)
     df_out.to_csv(output_path, index=False, sep=';')

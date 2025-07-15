@@ -2,20 +2,19 @@ import requests
 import pandas as pd
 import os
 import time
+from dotenv import load_dotenv
 
-API_KEY = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnYXJjaWFyQHByZWRpY3RpYS5lcyIsImp0aSI6ImQyMmZjOTdmLTcxM2ItNGU3OS1iNmY5LTMxNzY3MzM2ZDM0YyIsImlzcyI6IkFFTUVUIiwiaWF0IjoxNzUyMDUwNzg0LCJ1c2VySWQiOiJkMjJmYzk3Zi03MTNiLTRlNzktYjZmOS0zMTc2NzMzNmQzNGMiLCJyb2xlIjoiIn0.nKa6KIPqSopPMLVu1fj188VyKQpFgOhwJujr0MfZt_Q'  # Cambia por tu clave real
-
-headers = {'api_key': API_KEY}
+load_dotenv()  # Cargar variables de entorno desde .env
+API_KEY = os.getenv('API_KEY')
 
 # Paso 1: Obtener inventario completo y filtrar estaciones de Madrid
-
 def obtener_estaciones_madrid():
     """
     Obtiene las estaciones meteorológicas de Madrid desde el inventario de AEMET.
     """
     url_inventario = 'https://opendata.aemet.es/opendata/api/valores/climatologicos/inventarioestaciones/todasestaciones'
 
-    response = requests.get(url_inventario, headers=headers)
+    response = requests.get(url_inventario, headers={'api_key': API_KEY})
     data = response.json()
 
     if 'datos' in data:
@@ -34,76 +33,101 @@ def obtener_estaciones_madrid():
         estaciones = []
     return estaciones
 
-# URL base para descargar datos mensuales/anuales (con placeholders para año y estación)
-
-def descargar_y_guardar_datos(estacion, anio, max_retries=3):
-    base_url = ("https://opendata.aemet.es/opendata/api/valores/climatologicos/mensualesanuales/datos/"
-            "anioini/{anio}/aniofin/{anio}/estacion/{estacion}?api_key={apikey}")
-    carpeta = f"downloads/metereological-data/{estacion}"
-    os.makedirs(carpeta, exist_ok=True)
-    archivo = os.path.join(carpeta, f"datos_{estacion}_{anio}.csv")
+# Función para descargar datos de varias estaciones
+def descargar_y_guardar_datos_multiples(estaciones, anio, mes_inicio, mes_fin, max_retries=3):
+    base_url = ("https://opendata.aemet.es/opendata/api/valores/climatologicos/diarios/datos/"
+                "fechaini/{fecha_inicio}/fechafin/{fecha_fin}/estacion/{estaciones}?api_key={apikey}")
+    
+    # Crear el formato de fecha para la solicitud
+    fecha_inicio = f"{anio}-{mes_inicio:02d}-01T00:00:00UTC"
+    fecha_fin = f"{anio}-{mes_fin:02d}-01T00:00:00UTC"
+    
+    # Carpeta de descarga general
+    carpeta_principal = f"downloads/metereological-data"
+    os.makedirs(carpeta_principal, exist_ok=True)
 
     # Evitar volver a descargar si ya existe
+    archivo = os.path.join(carpeta_principal, f"datos_{anio}_{mes_inicio}_{mes_fin}.csv")
+
     if os.path.isfile(archivo):
-        print(f"[{anio}] Datos estación {estacion} ya descargados. Saltando.")
+        print(f"[{anio}-{mes_inicio}] Datos ya descargados. Saltando.")
         return True
 
-    url = base_url.format(anio=anio, estacion=estacion, apikey=API_KEY)
-    
+    # Unir todas las estaciones en una sola cadena separada por comas
+    estaciones_str = ','.join(estaciones)
+
+    # Asegurarse de que API_KEY esté definida
+    if not API_KEY:
+        raise ValueError("API_KEY no está definida. Asegúrate de que esté cargada correctamente.")
+
+    url = base_url.format(fecha_inicio=fecha_inicio, fecha_fin=fecha_fin, estaciones=estaciones_str, apikey=API_KEY)
+
     for intento in range(max_retries):
         try:
             response = requests.get(url, timeout=10)
-            time.sleep(1.25)  # Espera para evitar sobrecargar el servidor
+            # time.sleep(1.25)  # Espera para evitar sobrecargar el servidor
             if response.status_code == 200:
                 data = response.json()
                 url_datos = data.get('datos')
                 if url_datos:
                     resp_datos = requests.get(url_datos, timeout=20)
-                    # time.sleep(2)  # Espera para evitar sobrecargar el servidor
                     if resp_datos.status_code == 200:
                         datos_reales = resp_datos.json()
                         if datos_reales:
+                            # Crear un DataFrame con los datos obtenidos
                             df = pd.DataFrame(datos_reales)
-                            df.to_csv(archivo, index=False)
-                            # print(f"[{anio}] Datos estación {estacion} guardados en {archivo}")
+                            
+                            # Segregar los datos por estación
+                            for estacion in estaciones:
+                                # Crear la carpeta para la estación si no existe
+                                carpeta_estacion = os.path.join(carpeta_principal, estacion)
+                                os.makedirs(carpeta_estacion, exist_ok=True)
+
+                                # Filtrar los datos de la estación y guardarlos en su carpeta
+                                df_estacion = df[df['indicativo'] == estacion]
+                                archivo_estacion = os.path.join(carpeta_estacion, f"datos_{estacion}_{anio}_{mes_inicio}_{mes_fin}.csv")
+                                df_estacion.to_csv(archivo_estacion, index=False)
+                                print(f"Datos de estación {estacion} guardados en {archivo_estacion}")
                             return True
                         else:
-                            # print(f"[{anio}] No hay datos reales para estación {estacion}")
                             return False
                     else:
-                        # print(f"[{anio}] Error descargando datos reales: {resp_datos.status_code}")
                         return False
                 else:
-                    # print(f"[{anio}] No hay URL de datos para estación {estacion}")
                     return False
             elif response.status_code == 429:
-                # print(f"[{anio}] Límite de peticiones alcanzado, esperando 60 segundos...")
                 time.sleep(60)
         except requests.exceptions.RequestException as e:
-            # print(f"[{anio}] Error de conexión (intento {intento+1}/{max_retries}): {e}")
-            # print('')
             time.sleep(10 * (intento + 1))  # backoff exponencial
 
-    # print(f"[{anio}] Fallo definitivo para estación {estacion}")
     return False
 
-
-# Ejemplo de llamada para cada estación y año (asumiendo que tienes la lista `estaciones`):
-
-no_descargados = []
-
-def download_aemet_files():
+# Función principal para descargar los datos diarios de las estaciones
+def download_aemet_files_diarios():
     """
-    Descarga los datos de las estaciones meteorológicas de Madrid para los años 2001 a 2024.
+    Descarga los datos diarios de las estaciones meteorológicas de Madrid para los años 2001 a 2024.
     """
     estaciones = obtener_estaciones_madrid()
     if not estaciones:
-        # print("No se encontraron estaciones de Madrid.")
         return
 
-    for estacion in estaciones:
-        for anio in range(2001, 2025):
-            exito = descargar_y_guardar_datos(estacion, anio)
+    no_descargados = []
+    for anio in range(2001, 2025):
+        for mes_inicio in range(1, 13, 6):  # Intervalos de 6 meses
+            mes_fin = mes_inicio + 5
+            if mes_fin > 12:
+                mes_fin = 12
+            exito = descargar_y_guardar_datos_multiples(estaciones, anio, mes_inicio, mes_fin)
             if not exito:
-                no_descargados.append((estacion, anio))
+                no_descargados.append((anio, mes_inicio, mes_fin))
+    
+    # Si hay descargas fallidas, puedes guardarlas en un archivo o manejarlo de alguna forma
+    if no_descargados:
+        print("No se pudieron descargar los siguientes datos:")
+        for item in no_descargados:
+            print(item)
+    else:
+        print("Todos los datos se descargaron con éxito.")
 
+# Llamada a la función
+download_aemet_files_diarios()
