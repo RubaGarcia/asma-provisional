@@ -150,4 +150,4 @@ def download_aemet_files():
             print(item)
     else:
         print("Todos los datos se descargaron con éxito.")
-download_aemet_files()
+# download_aemet_files()
