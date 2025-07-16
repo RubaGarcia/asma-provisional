@@ -18,15 +18,33 @@ for carpeta_estacion in os.listdir(carpeta_raiz):
 
     for archivo in archivos_csv:
         try:
-            # Intentar leer el archivo CSV
-            df = pd.read_csv(archivo, sep=",", engine='python')  # Asegurarse de que usa el separador correcto
+            # Leer CSV sin asumir formato decimal
+            df = pd.read_csv(
+                archivo,
+                sep=",",
+                engine='python',
+                dtype=str  
+            )
 
-            df.columns = df.columns.str.strip().str.lower()  # Asegurarnos que los nombres de las columnas no tengan espacios
+            df.columns = df.columns.str.strip().str.lower()  # Limpiar nombres de columnas
 
             # Procesar fecha
             if 'fecha' in df.columns:
                 df['fecha'] = pd.to_datetime(df['fecha'], errors='coerce', dayfirst=False)
                 df = df.dropna(subset=['fecha'])  # Eliminar filas con fechas no válidas
+
+            for col in df.columns:
+                if col == 'fecha':
+                    continue  # Saltar columna de fecha
+
+                # Reemplazar ',' decimal por '.' solo en números (no texto general)
+                df[col] = df[col].str.replace(r'(\d+),(\d+)', r'\1.\2', regex=True)
+
+                # Eliminar separadores de miles (puntos en medio de números largos)
+                df[col] = df[col].str.replace(r'(?<=\d)\.(?=\d{3}(?:\D|$))', '', regex=True)
+
+                # Convertir a numérico donde sea posible
+                df[col] = pd.to_numeric(df[col], errors='ignore')
 
             # Eliminar columnas no necesarias
             columnas_a_eliminar = ['indicativo', 'nombre', 'provincia']
@@ -48,7 +66,7 @@ for carpeta_estacion in os.listdir(carpeta_raiz):
         df_estacion = pd.concat(dfs, ignore_index=True)
         df_estacion = df_estacion.sort_values(by='fecha')  # Orden cronológico
 
-        # Asegurarse de que la fecha está en formato ISO (sin necesidad de hacer un 'strftime')
+        # Asegurarse de que la fecha está en formato ISO (YYYY-MM-DD)
         if 'fecha' in df_estacion.columns:
             df_estacion['fecha'] = df_estacion['fecha'].dt.date  # Convierte a tipo 'date'
 
@@ -63,5 +81,3 @@ for carpeta_estacion in os.listdir(carpeta_raiz):
         print(f"✅ Estación {cod_estacion} procesada y guardada en {salida}")
     else:
         print(f"⚠️ No se encontraron datos válidos para estación: {carpeta_estacion}")
-
-
