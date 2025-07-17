@@ -1,0 +1,23 @@
+Variable,Descripción,Unidad
+fecha,Fecha de la observación,YYYY-MM-DD
+altitud,Altitud de la estación,m
+tmed,Temperatura media diaria,°C
+prec,Precipitación diaria acumulada,l/m²
+tmin,Temperatura mínima diaria,°C
+horatmin,Hora de la temperatura mínima,HH:MM
+tmax,Temperatura máxima diaria,°C
+horatmax,Hora de la temperatura máxima,HH:MM
+dir,Dirección media del viento,°
+velmedia,Velocidad media del viento,m/s
+racha,Racha máxima de viento,m/s
+horaracha,Hora de la racha máxima,HH:MM
+sol,Horas de sol,h
+presmax,Presión atmosférica máxima,hPa
+horapresmax,Hora de la presión máxima,HH:MM
+presmin,Presión atmosférica mínima,hPa
+horapresmin,Hora de la presión mínima,HH:MM
+hrmedia,Humedad relativa media,%
+hrmax,Humedad relativa máxima,%
+horahrmax,Hora de la humedad relativa máxima,HH:MM
+hrmin,Humedad relativa mínima,%
+horahrmin,Hora de la humedad relativa mínima,HH:MM

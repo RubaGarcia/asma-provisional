@@ -1,0 +1,19 @@
+Código Magnitud;Nombre Magnitud;Abreviatura;Unidad;Técnica de Medida
+01;Dióxido de Azufre;SO2;µg/m3;Fluorescencia ultravioleta
+06;Monóxido de Carbono;CO;mg/m3;Absorción infrarroja
+07;Monóxido de Nitrógeno;NO;µg/m3;Quimioluminiscencia
+08;Dióxido de Nitrógeno;NO2;µg/m3;Quimioluminiscencia
+09;Partículas < 2.5 µm;PM2.5;µg/m3;Microbalanza/Espectrometría
+10;Partículas < 10 µm;PM10;µg/m3;Microbalanza/Espectrometría
+12;Óxidos de Nitrógeno;NOx;µg/m3;Quimioluminiscencia
+14;Ozono;O3;µg/m3;Absorción ultravioleta
+20;Tolueno;TOL;µg/m3;Cromatografía de gases
+30;Benceno;BEN;µg/m3;Cromatografía de gases
+35;Etilbenceno;EBE;µg/m3;Cromatografía de gases
+37;Metaxileno;MXY;µg/m3;Cromatografía de gases
+38;Paraxileno;PXY;µg/m3;Cromatografía de gases
+39;Ortoxileno;OXY;µg/m3;Cromatografía de gases
+42;Hidrocarburos totales (hexano);TCH;mg/m3;Cromatografía de gases
+43;Metano;CH4;mg/m3;Cromatografía de gases
+44;Hidrocarburos no metánicos (hexano);NMHC;mg/m3;Cromatografía de gases
+431;Metaparaxileno;MPX;mg/m3;Cromatografía de gases

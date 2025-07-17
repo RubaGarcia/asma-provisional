@@ -1,0 +1,28 @@
+fecha;Momento temporal en que se hizo el muestreo
+Acer;Número de granos de polen de Acer por metro cúbico
+Alnus;Número de granos de polen de Alnus por metro cúbico
+Artemisia;Número de granos de polen de Artemisia por metro cúbico
+Betula;Número de granos de polen de Betula por metro cúbico
+Castanea;Número de granos de polen de Castanea por metro cúbico
+Compositae;Número de granos de polen de Compositae/Margaritas por metro cúbico
+Corylus;Número de granos de polen de Corylus por metro cúbico
+Chenopodiaceae/Amaranthaceae;Número de granos de polen de Chenopodiaceae/Amaranthaceae por metro cúbico
+Cupressaceae/Taxaceae;Número de granos de polen de Cupressaceae y Taxaceae por metro cúbico
+Ericaceae;Número de granos de polen de Ericaceae por metro cúbico
+Eucaliptus;Número de granos de polen de Eucaliptus por metro cúbico
+Fraxinus;Número de granos de polen de Fraxinus por metro cúbico
+Ligustrum;Número de granos de polen de Ligustrum por metro cúbico
+Moraceae;Número de granos de polen de Moraceae por metro cúbico
+Olea;Número de granos de polen de Olea por metro cúbico
+Pinus;Número de granos de polen de Pinus por metro cúbico
+Plantago;Número de granos de polen de Plantago por metro cúbico
+Platanus;Número de granos de polen de Platanus por metro cúbico
+Poaceae;Número de granos de polen de Poaceae (Gramíneas y Céspedes) por metro cúbico
+Populus;Número de granos de polen de Populus por metro cúbico
+Quercus;Número de granos de polen de Quercus (Robles y Encinas) por metro cúbico
+Rumex;Número de granos de polen de Rumex (Acederas) por metro cúbico
+Salix;Número de granos de polen de Salix (Sauce) por metro cúbico
+Ulmus;Número de granos de polen de Ulmus (Olmo) por metro cúbico
+Urticaceae;Número de granos de polen de Urticaceae (Ortiga) por metro cúbico
+Otros;Número de granos de polen de otros tipos polínicos identificados por metro cúbico
+PNI;Número de granos de polen no identificado (PNI) por metro cúbico
